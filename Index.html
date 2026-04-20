@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Social App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- LEFT -->
+    <div class="left">
+        <h3>Mini Social</h3>
+
+        <input type="text" id="username" placeholder="Enter your name">
+        <button onclick="start()">Start</button>
+
+        <h4>Suggestions</h4>
+        <div id="suggestions"></div>
+
+        <h4>Your Profile</h4>
+        <div id="profile" class="card"></div>
+
+        <button class="graphbtn" onclick="showGraph()">Show Digraph</button>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+        <h3>Profile Viewer</h3>
+        <div id="viewer" class="card">Select a user</div>
+
+        <h3>Digraph</h3>
+        <div id="graph" class="graph"></div>
+    </div>
+
+</div>
+
+<script>
+let graph = {
+    "Sam": ["Tom"],
+    "Tom": ["Harry"],
+    "Harry": ["Sam"]
+};
+
+let currentUser = "";
+
+// Start
+function start() {
+    let name = document.getElementById("username").value.trim();
+    if (!name) return;
+
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    currentUser = name;
+
+    if (!graph[currentUser]) graph[currentUser] = [];
+
+    updateUI();
+}
+
+// Update UI
+function updateUI() {
+    showSuggestions();
+    showProfile();
+}
+
+// Suggestions
+function showSuggestions() {
+    let div = document.getElementById("suggestions");
+    div.innerHTML = "";
+
+    Object.keys(graph).forEach(user => {
+        if (user !== currentUser && !graph[currentUser].includes(user)) {
+            let row = document.createElement("div");
+            row.className = "user";
+
+            row.innerHTML = `
+                <div class="nameRow">
+                    <div class="avatar">${user[0]}</div>
+                    ${user}
+                </div>
+                <button class="follow" onclick="follow('${user}')">Follow</button>
+            `;
+            div.appendChild(row);
+        }
+    });
+}
+
+// Follow
+function follow(user) {
+    if (!graph[currentUser].includes(user)) {
+        graph[currentUser].push(user);
+    }
+    updateUI();
+}
+
+// Profile
+function showProfile() {
+    let friends = graph[currentUser];
+
+    let html = `
+        <div class="nameRow">
+            <div class="avatar">${currentUser[0]}</div>
+            <b>${currentUser}</b>
+        </div>
+        <br>
+        Friends: ${friends.length}<br><br>
+    `;
+
+    friends.forEach(f => {
+        html += `<button class="view" onclick="view('${f}')">${f}</button>`;
+    });
+
+    document.getElementById("profile").innerHTML = html;
+}
+
+// Viewer
+function view(user) {
+    let theirFriends = graph[user];
+    let myFriends = graph[currentUser];
+
+    let mutual = theirFriends.filter(f => myFriends.includes(f));
+
+    let html = `
+        <div class="nameRow">
+            <div class="avatar">${user[0]}</div>
+            <b>${user}</b>
+        </div>
+        <br>
+        Friends (${theirFriends.length}): ${theirFriends.join(", ") || "None"}<br><br>
+        Mutual: ${mutual.join(", ") || "None"}
+    `;
+
+    document.getElementById("viewer").innerHTML = html;
+}
+
+// Graph
+function showGraph() {
+    let text = "";
+
+    for (let user in graph) {
+        graph[user].forEach(friend => {
+            text += `${user} → ${friend}\n`;
+        });
+    }
+
+    document.getElementById("graph").innerText =
+        text || "No connections yet.";
+}
+</script>
+
+</body>
+</html>
