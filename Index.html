@@ -44,7 +44,7 @@ let graph = {
 
 let currentUser = "";
 
-// Start
+
 function start() {
     let name = document.getElementById("username").value.trim();
     if (!name) return;
@@ -57,13 +57,13 @@ function start() {
     updateUI();
 }
 
-// Update UI
+
 function updateUI() {
     showSuggestions();
     showProfile();
 }
 
-// Suggestions
+
 function showSuggestions() {
     let div = document.getElementById("suggestions");
     div.innerHTML = "";
@@ -85,7 +85,7 @@ function showSuggestions() {
     });
 }
 
-// Follow
+
 function follow(user) {
     if (!graph[currentUser].includes(user)) {
         graph[currentUser].push(user);
@@ -93,7 +93,7 @@ function follow(user) {
     updateUI();
 }
 
-// Profile
+
 function showProfile() {
     let friends = graph[currentUser];
 
@@ -113,7 +113,7 @@ function showProfile() {
     document.getElementById("profile").innerHTML = html;
 }
 
-// Viewer
+
 function view(user) {
     let theirFriends = graph[user];
     let myFriends = graph[currentUser];
@@ -133,7 +133,7 @@ function view(user) {
     document.getElementById("viewer").innerHTML = html;
 }
 
-// Graph
+
 function showGraph() {
     let text = "";
 
